@@ -1,0 +1,14 @@
+# Compiled output
+/target
+
+# Packages and artifacts
+nlnet_package.tar.gz
+nlnet_package/
+
+# Backups
+*.bak
+
+# Private documents
+docs/BUDGET.md
+docs/NLNET_QUOTE.md
+docs/SUBMISSION_SUMMARY.md
