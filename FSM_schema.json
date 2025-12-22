@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FSM Governance Definition",
+  "type": "object",
+  "required": ["states", "transitions"],
+  "properties": {
+    "states": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "to", "action"],
+        "properties": {
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "action": { "type": "string" },
+          "guard": { "type": "string" },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "description": { "type": "string" },
+              "roles": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "initialState": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
