@@ -1,6 +1,6 @@
 # FSM Governance Engine
 
-Standalone Rust library for deterministic validation of integrity-critical, human-driven processes.
+Standalone Rust library for deterministic validation of integrity-critical, human-driven and system-driven processes.
 This project implements a validation-only FSM core. It does not execute actions, automate decisions, or enforce outcomes.
 
 ## Core innovation
@@ -42,7 +42,7 @@ cargo run --example fsm_definition_loader
 - Validation-only: the library does not execute actions or enforce outcomes.
 - Deterministic transitions and explicit contracts; invalid transitions are rejected.
 - Declarative definitions are schema-validated before use.
-- Audit records are append-only and deterministically ordered (where applicable).
+- Audit records are append-only and deterministically ordered within the validation scope (where applicable).
 
 ## Declarative layer
 
