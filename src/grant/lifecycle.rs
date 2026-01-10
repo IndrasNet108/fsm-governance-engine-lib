@@ -139,7 +139,7 @@ mod tests {
 
         grant.approve().unwrap();
         grant.activate().unwrap();
-        assert!(grant.disburse(1_000).is_ok());
+        assert!(grant.disburse(1_250).is_ok());
         assert_eq!(grant.status, GrantStatus::Completed);
     }
 

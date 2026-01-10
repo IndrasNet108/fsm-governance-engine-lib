@@ -22,21 +22,6 @@ pub enum IdeaStatus {
     Expired,           // Expired
 }
 
-/// Grant status enum - This was missing and is required by fsm.rs
-#[derive(BorshSerialize, BorshDeserialize, Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-pub enum GrantStatus {
-    #[default]
-    Pending,
-    Approved,
-    Active,
-    Suspended,
-    Completed,
-    Cancelled,
-    Rejected,
-    Expired,
-    Archived,
-}
-
 /// Member action enum
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum MemberAction {

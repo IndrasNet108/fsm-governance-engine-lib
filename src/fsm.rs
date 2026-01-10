@@ -3,7 +3,8 @@
 //! This module provides formal validation of state transitions for ideas and grants.
 //! Each state defines which states it can transition to, ensuring valid state changes.
 
-use crate::enums::{GrantStatus, IdeaStatus};
+use crate::enums::IdeaStatus;
+use crate::grant::types::GrantStatus;
 use crate::error::FsmError;
 
 /// FSM implementation for IdeaStatus

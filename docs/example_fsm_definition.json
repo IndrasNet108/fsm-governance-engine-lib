@@ -1,0 +1,58 @@
+{
+  "states": ["Draft", "Review", "Approved", "Archived"],
+  "transitions": [
+    {
+      "from": "Draft",
+      "to": "Review",
+      "action": "submit",
+      "metadata": {
+        "description": "Submit draft for review",
+        "roles": ["author"]
+      }
+    },
+    {
+      "from": "Review",
+      "to": "Approved",
+      "action": "approve",
+      "metadata": {
+        "description": "Approve the item",
+        "roles": ["reviewer"]
+      }
+    },
+    {
+      "from": "Review",
+      "to": "Archived",
+      "action": "reject",
+      "metadata": {
+        "description": "Reject and archive",
+        "roles": ["reviewer"]
+      }
+    },
+    {
+      "from": "Approved",
+      "to": "Archived",
+      "action": "archive",
+      "metadata": {
+        "description": "Archive after completion",
+        "roles": ["operator"]
+      }
+    }
+  ],
+  "defaults": {
+    "initialState": "Draft"
+  },
+  "invariants": [
+    {
+      "kind": "terminal_states",
+      "states": ["Archived"],
+      "description": "Archived is terminal."
+    },
+    {
+      "kind": "required_transitions",
+      "transitions": [
+        {"from": "Draft", "to": "Review"}
+      ],
+      "description": "Draft must progress to Review."
+    }
+  ]
+}

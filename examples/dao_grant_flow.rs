@@ -2,8 +2,7 @@
 
 use fsm_governance_engine_lib::{
     audit::{AuditEntry, AuditTrail},
-    grant::{Grant, GrantCategory, GrantDisbursementType, GrantVote, VoteType, VoterType},
-    enums::GrantStatus,
+    grant::{Grant, GrantCategory, GrantDisbursementType, GrantStatus, GrantType, GrantVote, VoteType, VoterType},
 };
 
 fn main() {
@@ -12,8 +11,8 @@ fn main() {
         10,
         [1u8; 32],
         GrantCategory::Research,
+        GrantType::Initial,
         GrantDisbursementType::Escrow,
-        GrantDisbursementType::Escrow, // reusing for demo
         1_000,
         250,
         1_000,

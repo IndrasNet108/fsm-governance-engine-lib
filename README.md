@@ -1,15 +1,54 @@
 # FSM Governance Engine
 
-Standalone Rust library for deterministic validation of integrity-critical processes.
+Standalone Rust library for deterministic validation of integrity-critical, human-driven processes.
 This project implements a validation-only FSM core. It does not execute actions, automate decisions, or enforce outcomes.
+
+## Core innovation
+
+Declarative, validation-only FSM for integrity-critical processes, with formally defined invariants
+and deterministic auditability.
 
 ## Highlights
 
+- Declarative FSM definitions (JSON) with a schema for states, transitions, and invariants.
 - Validation-only FSM core for deterministic process verification.
-- `Grant` struct with lifecycle helpers (`approve`, `activate`, `disburse`) enforced by `FsmError`.
-- `VoteType` + `GrantVote` for recording decision metadata.
-- JSON Schema (`docs/FSM_schema.json`) describing valid states/transitions.
+- Invariants as first-class artifacts (terminal rules, forbidden cycles, required transitions).
 - Audit trail (`AuditEntry`, `AuditTrail`) with serialization/export guidance.
+- Reference implementations for governance (`Grant`, `IdeaStatus`) to show integration patterns.
+
+## Quick verification (smoke checks)
+
+Run the full test suite:
+
+```bash
+cargo test
+```
+
+Validate a declarative FSM definition against the schema (strict mode):
+
+```bash
+cargo run --bin fsm_validate -- docs/example_fsm_definition.json --schema docs/FSM_schema.json --strict
+```
+
+Load and parse the example definition (definition loader example):
+
+```bash
+cargo run --example fsm_definition_loader
+# Expected: "Loaded 4 states and 4 transitions."
+```
+
+## Security notes
+
+- Validation-only: the library does not execute actions or enforce outcomes.
+- Deterministic transitions and explicit contracts; invalid transitions are rejected.
+- Declarative definitions are schema-validated before use.
+- Audit records are append-only and deterministically ordered (where applicable).
+
+## Declarative layer
+
+- Schema: `docs/FSM_schema.json`
+- Example: `docs/example_fsm_definition.json`
+- Invariant semantics: `docs/Invariants.md`
 
 ## Example integrations
 
@@ -31,13 +70,23 @@ This project implements a validation-only FSM core. It does not execute actions,
 ## Example scripts
 
 - `cargo run --example dao_grant_flow` — walkthrough: create grant, log audit entries, simulate vote, disburse and verify audit trail.
+- `cargo run --example fsm_definition_loader` — load and validate `docs/example_fsm_definition.json`.
+
+## CLI validator
+
+Use the built-in validator to check JSON definitions:
+
+```bash
+cargo run --bin fsm_validate -- docs/example_fsm_definition.json
+```
 
 ## Next steps
 
 1. Refer to `docs/API.md` for usage.
 2. Use `docs/AuditTrail.md` when integrating compliance logging.
 3. Validate custom FSM definitions with `docs/FSM_schema.json`.
-4. Follow `docs/RELEASE.md` to publish a crate release once testing/test coverage is complete.
+4. Review invariants guidance in `docs/Invariants.md`.
+5. Follow `docs/RELEASE.md` to publish a crate release once testing/test coverage is complete.
 
 ## Philosophical foundations (optional context)
 

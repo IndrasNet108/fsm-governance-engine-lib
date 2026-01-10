@@ -2,6 +2,19 @@
 
 ## Core primitives
 
+### `FsmDefinition`
+
+Declarative FSM definition used for validation-only workflows. It is designed to be loaded from
+JSON and validated before integration.
+
+- `FsmDefinition { states, transitions, defaults, invariants }` (JSON uses `initialState` in defaults)
+- `FsmDefinition::validate_structure()` – ensures transitions reference declared states and use non-empty actions.
+- `FsmDefinition::validate_invariants()` – enforces supported invariants (see `docs/Invariants.md`).
+- `FsmDefinition::validate()` – runs structure + invariant validation.
+
+Use `docs/FSM_schema.json` for schema validation, `docs/example_fsm_definition.json` for a concrete
+example, and `docs/Invariants.md` for invariant semantics.
+
 ### `Grant`
 
 - `Grant::new(id, idea_id, mesh_group_id, category, grant_type, disbursement_type, base_amount, reputation_bonus, created_at)` – creates validated grant state and calculates `total_amount`.
@@ -39,3 +52,16 @@ All domain structs derive both `BorshSerialize/BorshDeserialize` and `Serialize/
 - **Compliance pipeline**: Replace `Grant` with a `Report` type; each transition logs reviewer, decision, and metadata for regulators.
 
 This makes the module reusable for treasury workflows, compliance pipelines, or regulator-managed processes.
+
+## CLI validator
+
+The CLI validates declarative FSM JSON files.
+
+```bash
+cargo run --bin fsm_validate -- docs/example_fsm_definition.json
+```
+
+Options:
+
+- `--schema <path>`: validate against a JSON Schema (for example `docs/FSM_schema.json`).
+- `--strict`: requires `defaults.initialState` and at least one invariant.

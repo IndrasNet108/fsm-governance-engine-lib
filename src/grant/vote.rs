@@ -61,7 +61,7 @@ mod tests {
             voter_type: VoterType::MeshGroupMember,
             cast_at: 1000,
         };
-        let bytes = vote.try_to_vec().expect("serialization");
+        let bytes = borsh::to_vec(&vote).expect("serialization");
         let decoded = GrantVote::try_from_slice(&bytes).expect("deserialization");
         assert_eq!(decoded, vote);
     }

@@ -2,7 +2,7 @@
 //! 
 //! Records every state change for grants and allows verification of the sequence.
 
-use crate::enums::GrantStatus;
+use crate::grant::types::GrantStatus;
 use crate::error::FsmError;
 use borsh::{BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Serialize};

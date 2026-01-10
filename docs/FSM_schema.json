@@ -41,6 +41,35 @@
         "initialState": { "type": "string" }
       },
       "additionalProperties": false
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["kind"],
+        "properties": {
+          "kind": { "type": "string" },
+          "states": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "transitions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["from", "to"],
+              "properties": {
+                "from": { "type": "string" },
+                "to": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          },
+          "description": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "default": []
     }
   },
   "additionalProperties": false
