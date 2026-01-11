@@ -88,12 +88,11 @@ impl FsmDefinition {
             }
         }
 
-        if let Some(defaults) = &self.defaults {
-            if let Some(initial_state) = &defaults.initial_state {
-                if !state_set.contains(initial_state.as_str()) {
-                    return Err(FsmError::InvalidInput);
-                }
-            }
+        if let Some(defaults) = &self.defaults
+            && let Some(initial_state) = &defaults.initial_state
+            && !state_set.contains(initial_state.as_str())
+        {
+            return Err(FsmError::InvalidInput);
         }
 
         Ok(())
@@ -110,7 +109,8 @@ impl FsmDefinition {
             .map(|t| (t.from.as_str(), t.to.as_str()))
             .collect();
 
-        let mut adjacency: std::collections::HashMap<&str, Vec<&str>> = std::collections::HashMap::new();
+        let mut adjacency: std::collections::HashMap<&str, Vec<&str>> =
+            std::collections::HashMap::new();
         for transition in &self.transitions {
             adjacency
                 .entry(transition.from.as_str())
@@ -122,29 +122,27 @@ impl FsmDefinition {
             match invariant.kind.as_str() {
                 "terminal_states" => {
                     for state in &invariant.states {
-                        if let Some(outbound) = adjacency.get(state.as_str()) {
-                            if !outbound.is_empty() {
-                                return Err(FsmError::InvalidInput);
-                            }
+                        if let Some(outbound) = adjacency.get(state.as_str())
+                            && !outbound.is_empty()
+                        {
+                            return Err(FsmError::InvalidInput);
                         }
                     }
                 }
                 "required_transitions" => {
                     for transition in &invariant.transitions {
-                        if !transition_set.contains(&(
-                            transition.from.as_str(),
-                            transition.to.as_str(),
-                        )) {
+                        if !transition_set
+                            .contains(&(transition.from.as_str(), transition.to.as_str()))
+                        {
                             return Err(FsmError::InvalidInput);
                         }
                     }
                 }
                 "forbidden_transitions" => {
                     for transition in &invariant.transitions {
-                        if transition_set.contains(&(
-                            transition.from.as_str(),
-                            transition.to.as_str(),
-                        )) {
+                        if transition_set
+                            .contains(&(transition.from.as_str(), transition.to.as_str()))
+                        {
                             return Err(FsmError::InvalidInput);
                         }
                     }
@@ -299,6 +297,9 @@ mod tests {
             }],
         };
 
-        assert_eq!(definition.validate_invariants(), Err(FsmError::InvalidInput));
+        assert_eq!(
+            definition.validate_invariants(),
+            Err(FsmError::InvalidInput)
+        );
     }
 }

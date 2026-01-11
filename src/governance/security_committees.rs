@@ -42,13 +42,13 @@ pub mod onchain {
         name: String,
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(committee_id > 0) {
+        if committee_id == 0 {
             return Err(FsmError::InvalidInput);
         }
-        if !(!name.is_empty()) {
+        if name.is_empty() {
             return Err(FsmError::InvalidInput);
         }
-        if !(name.len() <= 100) {
+        if name.len() > 100 {
             return Err(FsmError::InvalidInput);
         }
 
@@ -72,6 +72,7 @@ pub mod offchain {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::useless_vec)]
     use super::*;
     use crate::error::FsmError;
 
@@ -299,7 +300,7 @@ mod tests {
     fn test_offchain_coordinate_meeting() {
         // Test that offchain function exists and returns false (default)
         let result = offchain::coordinate_meeting(1);
-        assert_eq!(result, false);
+        assert!(!result);
     }
 
     #[test]
@@ -307,7 +308,7 @@ mod tests {
         // Test with different IDs
         let result1 = offchain::coordinate_meeting(1);
         let result2 = offchain::coordinate_meeting(999);
-        assert_eq!(result1, false);
-        assert_eq!(result2, false);
+        assert!(!result1);
+        assert!(!result2);
     }
 }

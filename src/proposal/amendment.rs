@@ -31,10 +31,10 @@ impl<P> ProposalAmendment<P> {
         content: String,
         current_time: i64,
     ) -> Result<ProposalAmendment<P>, FsmError> {
-        if !(!content.is_empty()) {
+        if content.is_empty() {
             return Err(FsmError::InvalidInput);
         }
-        if !(content.len() <= 2000) {
+        if content.len() > 2000 {
             return Err(FsmError::InvalidInput);
         }
         Ok(Self {
@@ -51,7 +51,6 @@ impl<P> ProposalAmendment<P> {
 mod tests {
     use super::*;
     use crate::error::FsmError;
-    use std::marker::PhantomData;
     fn create_test_pubkey(seed: u8) -> u8 {
         seed
     }
@@ -66,11 +65,11 @@ mod tests {
             1000,
         )
         .unwrap();
-        assert_eq!(amendment.amendment_id);
-        assert_eq!(amendment.proposal_id);
+        assert_eq!(amendment.amendment_id, 1);
+        assert_eq!(amendment.proposal_id, 100);
         assert_eq!(amendment.author, author);
         assert_eq!(amendment.content, "Amendment content");
-        assert_eq!(amendment.created_at);
+        assert_eq!(amendment.created_at, 1000);
     }
     #[test]
     fn test_proposal_amendment_validation_empty_content() {

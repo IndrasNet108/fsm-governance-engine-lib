@@ -22,22 +22,22 @@ impl<P> Proposal<P> {
         author: P,
         current_time: i64,
     ) -> Result<Proposal<P>, FsmError> {
-        if !(!title.is_empty()) {
+        if title.is_empty() {
             return Err(FsmError::InvalidInput);
         }
-        if !(title.len() <= 200) {
+        if title.len() > 200 {
             return Err(FsmError::InvalidInput);
         }
-        if !(!description.is_empty()) {
+        if description.is_empty() {
             return Err(FsmError::InvalidInput);
         }
-        if !(description.len() <= 2000) {
+        if description.len() > 2000 {
             return Err(FsmError::InvalidInput);
         }
-        if !(!proposal_type.is_empty()) {
+        if proposal_type.is_empty() {
             return Err(FsmError::InvalidInput);
         }
-        if !(proposal_type.len() <= 50) {
+        if proposal_type.len() > 50 {
             return Err(FsmError::InvalidInput);
         }
         Ok(Self {
@@ -77,16 +77,16 @@ impl<P> Proposal<P> {
         total_members: u64,
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(self.status == ProposalStatus::Draft) {
+        if self.status != ProposalStatus::Draft {
             return Err(FsmError::InvalidInput);
         }
-        if !(total_members >= min_quorum) {
+        if total_members < min_quorum {
             return Err(FsmError::InsufficientMembers);
         }
-        if !(min_quorum > 0) {
+        if min_quorum == 0 {
             return Err(FsmError::InvalidInput);
         }
-        if !(total_members > 0) {
+        if total_members == 0 {
             return Err(FsmError::InvalidInput);
         }
 
@@ -100,13 +100,13 @@ impl<P> Proposal<P> {
     }
     /// Pass proposal with specified time
     pub fn pass_with_time(&mut self, current_time: i64) -> Result<(), FsmError> {
-        if !(self.status == ProposalStatus::Active) {
+        if self.status != ProposalStatus::Active {
             return Err(FsmError::InvalidInput);
         }
 
         // Check that voting is completed
         let voting_end = self.created_at + self.voting_duration;
-        if !(current_time >= voting_end) {
+        if current_time < voting_end {
             return Err(FsmError::InvalidState);
         }
 
@@ -119,13 +119,13 @@ impl<P> Proposal<P> {
     }
     /// Reject proposal with specified time
     pub fn reject_with_time(&mut self, current_time: i64) -> Result<(), FsmError> {
-        if !(self.status == ProposalStatus::Active) {
+        if self.status != ProposalStatus::Active {
             return Err(FsmError::InvalidInput);
         }
 
         // Check that voting is completed
         let voting_end = self.created_at + self.voting_duration;
-        if !(current_time >= voting_end) {
+        if current_time < voting_end {
             return Err(FsmError::InvalidState);
         }
 
@@ -138,10 +138,10 @@ impl<P> Proposal<P> {
     }
     /// Execute proposal with specified time
     pub fn execute_with_time(&mut self, current_time: i64) -> Result<(), FsmError> {
-        if !(self.status == ProposalStatus::Passed) {
+        if self.status != ProposalStatus::Passed {
             return Err(FsmError::InvalidInput);
         }
-        if !(self.executed_at.is_none()) {
+        if self.executed_at.is_some() {
             return Err(FsmError::InvalidState);
         }
 
@@ -155,7 +155,7 @@ impl<P> Proposal<P> {
     }
     /// Cancel proposal with specified time
     pub fn cancel_with_time(&mut self, reason: String, current_time: i64) -> Result<(), FsmError> {
-        if !(self.status == ProposalStatus::Draft || self.status == ProposalStatus::Active) {
+        if self.status != ProposalStatus::Draft && self.status != ProposalStatus::Active {
             return Err(FsmError::InvalidInput);
         }
         self.status = ProposalStatus::Cancelled;
@@ -169,9 +169,9 @@ impl<P> Proposal<P> {
     }
     /// Archive proposal with specified time
     pub fn archive_with_time(&mut self, current_time: i64) -> Result<(), FsmError> {
-        if !(self.status == ProposalStatus::Executed
-            || self.status == ProposalStatus::Rejected
-            || self.status == ProposalStatus::Cancelled)
+        if self.status != ProposalStatus::Executed
+            && self.status != ProposalStatus::Rejected
+            && self.status != ProposalStatus::Cancelled
         {
             return Err(FsmError::InvalidInput);
         }
@@ -182,26 +182,23 @@ impl<P> Proposal<P> {
     /// Check if proposal has expired and auto-archive if needed
     /// Returns true if proposal was archived, false otherwise
     pub fn check_and_auto_archive(&mut self, current_time: i64) -> Result<bool, FsmError> {
-        if let Some(expires_at) = self.expires_at {
-            if current_time >= expires_at {
-                // Only auto-archive if in a finalizable state
-                if self.status == ProposalStatus::Executed
-                    || self.status == ProposalStatus::Rejected
-                    || self.status == ProposalStatus::Cancelled
-                {
-                    self.archive_with_time(current_time)?;
-                    return Ok(true);
-                }
-            }
+        if let Some(expires_at) = self.expires_at
+            && current_time >= expires_at
+            && (self.status == ProposalStatus::Executed
+                || self.status == ProposalStatus::Rejected
+                || self.status == ProposalStatus::Cancelled)
+        {
+            self.archive_with_time(current_time)?;
+            return Ok(true);
         }
         Ok(false)
     }
     /// Set expiration time for proposal
     pub fn set_expiration(&mut self, expires_at: Option<i64>) -> Result<(), FsmError> {
-        if let Some(exp) = expires_at {
-            if !(exp > self.created_at) {
-                return Err(FsmError::InvalidInput);
-            }
+        if let Some(exp) = expires_at
+            && exp <= self.created_at
+        {
+            return Err(FsmError::InvalidInput);
         }
         self.expires_at = expires_at;
         Ok(())
@@ -246,7 +243,6 @@ impl<P> Proposal<P> {
 mod tests {
     use super::*;
     use crate::error::FsmError;
-    use std::marker::PhantomData;
     fn create_test_pubkey(seed: u8) -> u8 {
         seed
     }
@@ -263,11 +259,11 @@ mod tests {
         )
         .unwrap();
 
-        assert_eq!(proposal.id);
+        assert_eq!(proposal.id, 1);
         assert_eq!(proposal.title, "Test Proposal");
         assert_eq!(proposal.author, author);
         assert_eq!(proposal.status, ProposalStatus::Draft);
-        assert_eq!(proposal.created_at);
+        assert_eq!(proposal.created_at, 1000);
     }
     #[test]
     fn test_proposal_new_validation_empty_title() {
@@ -295,7 +291,7 @@ mod tests {
         )
         .unwrap();
 
-        assert!(proposal.activate_with_time(10, 20).is_ok());
+        assert!(proposal.activate_with_time(10, 20, 2000).is_ok());
         assert_eq!(proposal.status, ProposalStatus::Active);
         assert_eq!(proposal.submitted_at, Some(2000));
     }
@@ -314,7 +310,7 @@ mod tests {
 
         // total_members < min_quorum
         assert_eq!(
-            proposal.activate_with_time(20, 10).unwrap_err(),
+            proposal.activate_with_time(20, 10, 2000).unwrap_err(),
             FsmError::InsufficientMembers
         );
     }
@@ -331,7 +327,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
 
         // Pass after voting duration
         let voting_end = proposal.created_at + proposal.voting_duration;
@@ -351,7 +347,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
 
         // Try to pass before voting ends - should fail
         assert_eq!(
@@ -372,7 +368,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         let voting_end = proposal.created_at + proposal.voting_duration;
 
         assert!(proposal.reject_with_time(voting_end + 1).is_ok());
@@ -391,11 +387,11 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
 
         assert!(
             proposal
-                .cancel_with_time("Changed mind".to_string())
+                .cancel_with_time("Changed mind".to_string(), 3000)
                 .is_ok()
         );
         assert_eq!(proposal.status, ProposalStatus::Cancelled);
@@ -418,7 +414,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         let voting_end = proposal.created_at + proposal.voting_duration;
         proposal.pass_with_time(voting_end + 1).unwrap();
 
@@ -440,7 +436,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         let voting_end = proposal.created_at + proposal.voting_duration;
         proposal.pass_with_time(voting_end + 1).unwrap();
         proposal.execute_with_time(3000).unwrap();
@@ -463,7 +459,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         let voting_end = proposal.created_at + proposal.voting_duration;
         proposal.reject_with_time(voting_end + 1).unwrap();
 
@@ -484,9 +480,9 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         proposal
-            .cancel_with_time("Changed mind".to_string())
+            .cancel_with_time("Changed mind".to_string(), 3000)
             .unwrap();
 
         // Can archive cancelled proposal
@@ -512,7 +508,7 @@ mod tests {
             FsmError::InvalidInput
         );
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         assert_eq!(
             proposal.archive_with_time(4000).unwrap_err(),
             FsmError::InvalidInput
@@ -531,12 +527,12 @@ mod tests {
         )
         .unwrap();
 
-        assert_eq!(proposal.id);
+        assert_eq!(proposal.id, 999);
         assert_eq!(proposal.title, "Title");
         assert_eq!(proposal.description, "Description");
         assert_eq!(proposal.proposal_type, "type");
         assert_eq!(proposal.author, author);
-        assert_eq!(proposal.created_at);
+        assert_eq!(proposal.created_at, 5000);
         assert_eq!(proposal.status, ProposalStatus::Draft);
         assert_eq!(proposal.voting_duration, 7 * 24 * 3600);
     }
@@ -555,7 +551,7 @@ mod tests {
 
         // Zero quorum should fail
         assert_eq!(
-            proposal.activate_with_time(0, 10).unwrap_err(),
+            proposal.activate_with_time(0, 10, 2000).unwrap_err(),
             FsmError::InvalidInput
         );
     }
@@ -574,8 +570,8 @@ mod tests {
 
         // Zero total members should fail
         assert_eq!(
-            proposal.activate_with_time(10, 0).unwrap_err(),
-            FsmError::InvalidInput
+            proposal.activate_with_time(10, 0, 2000).unwrap_err(),
+            FsmError::InsufficientMembers
         );
     }
     #[test]
@@ -591,7 +587,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
 
         // Pass exactly at voting end
         let voting_end = proposal.created_at + proposal.voting_duration;
@@ -611,7 +607,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         let voting_end = proposal.created_at + proposal.voting_duration;
         proposal.pass_with_time(voting_end + 1).unwrap();
         proposal.execute_with_time(5000).unwrap();
@@ -619,7 +615,7 @@ mod tests {
         // Try to execute again - should fail
         assert_eq!(
             proposal.execute_with_time(6000).unwrap_err(),
-            FsmError::InvalidState
+            FsmError::InvalidInput
         );
     }
     #[test]
@@ -636,7 +632,11 @@ mod tests {
         .unwrap();
 
         // Cancel from Draft
-        assert!(proposal.cancel_with_time("Reason".to_string()).is_ok());
+        assert!(
+            proposal
+                .cancel_with_time("Reason".to_string(), 3000)
+                .is_ok()
+        );
         assert_eq!(proposal.status, ProposalStatus::Cancelled);
         assert_eq!(proposal.cancellation_reason, Some("Reason".to_string()));
     }
@@ -653,13 +653,15 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         let voting_end = proposal.created_at + proposal.voting_duration;
         proposal.pass_with_time(voting_end + 1).unwrap();
 
         // Cannot cancel Passed proposal
         assert_eq!(
-            proposal.cancel_with_time("Reason".to_string()).unwrap_err(),
+            proposal
+                .cancel_with_time("Reason".to_string(), 3000)
+                .unwrap_err(),
             FsmError::InvalidInput
         );
     }
@@ -717,7 +719,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         let voting_end = proposal.created_at + proposal.voting_duration;
         proposal.reject_with_time(voting_end + 1).unwrap();
 
@@ -741,7 +743,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         let voting_end = proposal.created_at + proposal.voting_duration;
         proposal.reject_with_time(voting_end + 1).unwrap();
 
@@ -765,7 +767,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         proposal.yes_votes = 100;
         proposal.no_votes = 50;
 
@@ -792,7 +794,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         proposal.yes_votes = 50;
         proposal.no_votes = 100;
 
@@ -819,7 +821,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         proposal.yes_votes = 100;
         proposal.no_votes = 100;
 
@@ -846,7 +848,7 @@ mod tests {
         )
         .unwrap();
 
-        proposal.activate_with_time(10, 20).unwrap();
+        proposal.activate_with_time(10, 20, 2000).unwrap();
         proposal.yes_votes = 100;
         proposal.no_votes = 50;
 

@@ -16,6 +16,13 @@ and deterministic auditability.
 - Audit trail (`AuditEntry`, `AuditTrail`) with serialization/export guidance.
 - Reference implementations for governance (`Grant`, `IdeaStatus`) to show integration patterns.
 
+## Quickstart
+
+```bash
+cargo test
+cargo run --example fsm_definition_loader
+```
+
 ## Quick verification (smoke checks)
 
 Run the full test suite:
@@ -29,6 +36,8 @@ Validate a declarative FSM definition against the schema (strict mode):
 ```bash
 cargo run --bin fsm_validate -- docs/example_fsm_definition.json --schema docs/FSM_schema.json --strict
 ```
+
+Expected: OK (strict validation).
 
 Load and parse the example definition (definition loader example):
 
@@ -44,11 +53,28 @@ cargo run --example fsm_definition_loader
 - Declarative definitions are schema-validated before use.
 - Audit records are append-only and deterministically ordered within the validation scope (where applicable).
 
+## Explicit non-goals
+
+- No execution or orchestration of workflows.
+- No automation of decisions or governance outcomes.
+- No authorization, identity, or key management.
+- No storage, networking, or external side effects.
+
 ## Declarative layer
 
 - Schema: `docs/FSM_schema.json`
+- Schema overview: `docs/FSM_schema.md`
 - Example: `docs/example_fsm_definition.json`
 - Invariant semantics: `docs/Invariants.md`
+
+## Documentation
+
+- API: `docs/API.md`
+- Audit trail: `docs/AuditTrail.md`
+- Audit model: `docs/AuditModel.md`
+- Contributing: `CONTRIBUTING.md`
+- Governance: `GOVERNANCE.md`
+- Code of Conduct: `CODE_OF_CONDUCT.md`
 
 ## Example integrations
 
@@ -69,8 +95,17 @@ cargo run --example fsm_definition_loader
 
 ## Example scripts
 
-- `cargo run --example dao_grant_flow` — walkthrough: create grant, log audit entries, simulate vote, disburse and verify audit trail.
-- `cargo run --example fsm_definition_loader` — load and validate `docs/example_fsm_definition.json`.
+- `cargo run --example dao_grant_flow` — walkthrough: create grant, log audit entries, simulate vote, disburse and verify audit trail. Expected: `Audit JSONL` and `Audit trail entries: 2`.
+- `cargo run --example fsm_definition_loader` — load and validate `docs/example_fsm_definition.json`. Expected: `Loaded 4 states and 4 transitions.`.
+- `cargo run --example governance_lifecycle` — proposal lifecycle (draft → executed). Expected: `Proposal lifecycle complete: Executed`.
+- `cargo run --example voting` — governance voting metadata initialization. Expected: `Voting initialized for proposal 200`.
+- `cargo run --example treasury_flow` — treasury operation validation. Expected: `Treasury operation validated: Transfer`.
+- `cargo run --example audit_only_validation` — audit trail validation without execution. Expected: `Audit JSONL` and `Audit-only validation complete: 1 entries`.
+
+## CI
+
+GitHub Actions runs fmt, clippy, and tests on stable and nightly.
+For CI validation steps, see `docs/CI_validation.md`.
 
 ## CLI validator
 

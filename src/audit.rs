@@ -1,9 +1,9 @@
 //! Audit trail helpers for FSM transitions.
-//! 
+//!
 //! Records every state change for grants and allows verification of the sequence.
 
-use crate::grant::types::GrantStatus;
 use crate::error::FsmError;
+use crate::grant::types::GrantStatus;
 use borsh::{BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Serialize};
 
@@ -50,7 +50,9 @@ pub struct AuditTrail {
 
 impl AuditTrail {
     pub fn new() -> Self {
-        Self { entries: Vec::new() }
+        Self {
+            entries: Vec::new(),
+        }
     }
 
     /// Append an audit entry after verifying the transition is permitted.
@@ -147,17 +149,20 @@ mod tests {
     #[test]
     fn trail_contains_multiple_grants() {
         let mut trail = AuditTrail::new();
-        trail.record(sample_entry(GrantStatus::Pending, GrantStatus::Approved)).unwrap();
-        trail.record(AuditEntry::new(
-            2,
-            [1u8; 32],
-            GrantStatus::Pending,
-            GrantStatus::Approved,
-            "approve",
-            2_000,
-            None,
-        ))
-        .unwrap();
+        trail
+            .record(sample_entry(GrantStatus::Pending, GrantStatus::Approved))
+            .unwrap();
+        trail
+            .record(AuditEntry::new(
+                2,
+                [1u8; 32],
+                GrantStatus::Pending,
+                GrantStatus::Approved,
+                "approve",
+                2_000,
+                None,
+            ))
+            .unwrap();
         assert_eq!(trail.entries().len(), 2);
         assert!(trail.verify().is_ok());
     }

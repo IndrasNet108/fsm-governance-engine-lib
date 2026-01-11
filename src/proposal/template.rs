@@ -70,37 +70,37 @@ impl<P> ProposalTemplate<P> {
         created_by: P,
         current_time: i64,
     ) -> Result<Self, FsmError> {
-        if !(!name.is_empty()) {
+        if name.is_empty() {
             return Err(FsmError::InvalidInput);
         }
-        if !(name.len() <= 100) {
+        if name.len() > 100 {
             return Err(FsmError::InvalidInput);
         }
-        if !(!description.is_empty()) {
+        if description.is_empty() {
             return Err(FsmError::InvalidInput);
         }
-        if !(description.len() <= 500) {
+        if description.len() > 500 {
             return Err(FsmError::InvalidInput);
         }
-        if !(!proposal_type.is_empty()) {
+        if proposal_type.is_empty() {
             return Err(FsmError::InvalidInput);
         }
-        if !(proposal_type.len() <= 50) {
+        if proposal_type.len() > 50 {
             return Err(FsmError::InvalidInput);
         }
-        if !(fields.len() <= 20) {
+        if fields.len() > 20 {
             return Err(FsmError::InvalidInput);
         } // Max 20 fields
 
         // Validate all fields
         for field in &fields {
-            if !(!field.name.is_empty()) {
+            if field.name.is_empty() {
                 return Err(FsmError::InvalidInput);
             }
-            if !(field.name.len() <= 50) {
+            if field.name.len() > 50 {
                 return Err(FsmError::InvalidInput);
             }
-            if !(field.description.len() <= 200) {
+            if field.description.len() > 200 {
                 return Err(FsmError::InvalidInput);
             }
         }
@@ -138,38 +138,38 @@ impl<P> ProposalTemplate<P> {
         current_time: i64,
     ) -> Result<(), FsmError> {
         if let Some(new_name) = name {
-            if !(!new_name.is_empty()) {
+            if new_name.is_empty() {
                 return Err(FsmError::InvalidInput);
             }
-            if !(new_name.len() <= 100) {
+            if new_name.len() > 100 {
                 return Err(FsmError::InvalidInput);
             }
             self.name = new_name;
         }
 
         if let Some(new_description) = description {
-            if !(!new_description.is_empty()) {
+            if new_description.is_empty() {
                 return Err(FsmError::InvalidInput);
             }
-            if !(new_description.len() <= 500) {
+            if new_description.len() > 500 {
                 return Err(FsmError::InvalidInput);
             }
             self.description = new_description;
         }
 
         if let Some(new_fields) = fields {
-            if !(new_fields.len() <= 20) {
+            if new_fields.len() > 20 {
                 return Err(FsmError::InvalidInput);
             }
             // Validate all fields
             for field in &new_fields {
-                if !(!field.name.is_empty()) {
+                if field.name.is_empty() {
                     return Err(FsmError::InvalidInput);
                 }
-                if !(field.name.len() <= 50) {
+                if field.name.len() > 50 {
                     return Err(FsmError::InvalidInput);
                 }
-                if !(field.description.len() <= 200) {
+                if field.description.len() > 200 {
                     return Err(FsmError::InvalidInput);
                 }
             }
@@ -187,7 +187,7 @@ impl<P> ProposalTemplate<P> {
 
     /// Deactivate template with specified time
     pub fn deactivate_with_time(&mut self, current_time: i64) -> Result<(), FsmError> {
-        if !(self.is_active) {
+        if !self.is_active {
             return Err(FsmError::InvalidState);
         }
         self.is_active = false;
@@ -202,7 +202,7 @@ impl<P> ProposalTemplate<P> {
 
     /// Activate template with specified time
     pub fn activate_with_time(&mut self, current_time: i64) -> Result<(), FsmError> {
-        if !(!self.is_active) {
+        if self.is_active {
             return Err(FsmError::InvalidState);
         }
         self.is_active = true;

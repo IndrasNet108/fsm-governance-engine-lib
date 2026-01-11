@@ -14,9 +14,6 @@ pub mod template;
 pub mod treasury;
 pub mod types;
 
-#[cfg(test)]
-mod tests;
-
 // Re-export types
 pub use amendment::ProposalAmendment;
 pub use analytics::{

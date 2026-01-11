@@ -10,3 +10,10 @@
 - Expanded schema and docs for invariants (`docs/Invariants.md`) plus example definition JSON.
 - Added CLI validator (`fsm_validate`) and example loader for JSON definitions.
 - Added `--schema` and `--strict` flags to the CLI validator.
+- Added documentation: FSM schema overview, audit model, contributing, governance, and code of conduct.
+- Added examples for governance lifecycle, voting, treasury flow, and audit-only validation, plus JSON definition tests.
+- Added CI workflow (fmt, clippy, tests) and Dependabot configuration.
+- Documented schema overview and audit model in API docs.
+- Added CI validation script and integration guide.
+- Added CI validation workflow for strict FSM checks.
+- Added JSONL audit output to examples with minimal structure checks.

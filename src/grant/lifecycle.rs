@@ -26,6 +26,7 @@ pub struct Grant {
 }
 
 impl Grant {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         id: u64,
         idea_id: u64,

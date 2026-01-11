@@ -60,7 +60,7 @@ pub mod onchain {
         analytics_config_hash: [u8; 32],
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(analytics_id > 0) {
+        if analytics_id == 0 {
             return Err(FsmError::InvalidInput);
         }
         analytics.analytics_id = analytics_id;
@@ -82,6 +82,7 @@ pub mod offchain {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::useless_vec)]
     use super::*;
     use crate::error::FsmError;
 

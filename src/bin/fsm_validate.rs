@@ -107,11 +107,9 @@ fn main() {
         process::exit(1);
     }
 
-    if strict {
-        if let Err(err) = validate_strict(&definition) {
-            eprintln!("Strict validation failed: {}", err);
-            process::exit(1);
-        }
+    if strict && let Err(err) = validate_strict(&definition) {
+        eprintln!("Strict validation failed: {}", err);
+        process::exit(1);
     }
 
     println!("OK: FSM definition is valid.");

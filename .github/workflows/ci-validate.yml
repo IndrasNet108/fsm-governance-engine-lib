@@ -1,0 +1,19 @@
+name: ci-validate
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: cargo test
+        run: cargo test
+      - name: validate fsm definitions
+        run: ./scripts/validate_fsm.sh
