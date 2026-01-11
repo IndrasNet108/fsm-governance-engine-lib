@@ -3,6 +3,7 @@ use std::fs;
 use std::process;
 
 use fsm_governance_engine_lib::FsmDefinition;
+use jsonschema::JSONSchema;
 use serde_json::Value;
 
 fn main() {
@@ -76,18 +77,17 @@ fn main() {
             }
         };
 
-        // jsonschema 0.38+: use validator_for instead of JSONSchema::compile.
-        let validator = match jsonschema::validator_for(&schema_json) {
-            Ok(validator) => validator,
+        let compiled = match JSONSchema::compile(&schema_json) {
+            Ok(compiled) => compiled,
             Err(err) => {
                 eprintln!("Schema compile error: {}", err);
                 process::exit(1);
             }
         };
 
-        if !validator.is_valid(&json_value) {
+        if let Err(errors) = compiled.validate(&json_value) {
             eprintln!("Schema validation failed:");
-            for error in validator.iter_errors(&json_value).take(5) {
+            for error in errors.take(5) {
                 eprintln!("- {}", error);
             }
             process::exit(1);
