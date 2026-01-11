@@ -4,7 +4,18 @@ use borsh::{BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Serialize};
 
 /// Idea status enum
-#[derive(BorshSerialize, BorshDeserialize, Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(
+    BorshSerialize,
+    BorshDeserialize,
+    Clone,
+    Copy,
+    Debug,
+    Default,
+    PartialEq,
+    Eq,
+    Serialize,
+    Deserialize,
+)]
 pub enum IdeaStatus {
     #[default]
     Draft, // Draft
@@ -89,6 +100,7 @@ pub enum MemberStatus {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::useless_vec)]
     use super::*;
 
     #[test]

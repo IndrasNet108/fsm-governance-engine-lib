@@ -15,6 +15,9 @@ JSON and validated before integration.
 Use `docs/FSM_schema.json` for schema validation, `docs/example_fsm_definition.json` for a concrete
 example, and `docs/Invariants.md` for invariant semantics.
 
+See `docs/FSM_schema.md` for a schema overview and `docs/AuditModel.md` for audit record semantics.
+See `docs/CI_validation.md` for CI/CD integration examples.
+
 ### `Grant`
 
 - `Grant::new(id, idea_id, mesh_group_id, category, grant_type, disbursement_type, base_amount, reputation_bonus, created_at)` – creates validated grant state and calculates `total_amount`.

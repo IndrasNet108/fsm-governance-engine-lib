@@ -1,0 +1,11 @@
+{
+  "states": ["Open", "Closed", "Cancelled"],
+  "transitions": [
+    {"from": "Open", "to": "Closed", "action": "close"},
+    {"from": "Open", "to": "Cancelled", "action": "cancel"}
+  ],
+  "defaults": {"initialState": "Open"},
+  "invariants": [
+    {"kind": "terminal_states", "states": ["Closed", "Cancelled"]}
+  ]
+}

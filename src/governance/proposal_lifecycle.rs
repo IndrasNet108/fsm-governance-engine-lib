@@ -50,7 +50,7 @@ pub mod onchain {
         proposal_id: u64,
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(lifecycle_id > 0) {
+        if lifecycle_id == 0 {
             return Err(FsmError::InvalidInput);
         }
 
@@ -75,6 +75,7 @@ pub mod offchain {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::useless_vec)]
     use super::*;
     use crate::error::FsmError;
 
@@ -365,7 +366,7 @@ mod tests {
     fn test_offchain_advance_lifecycle() {
         // Test that offchain function exists and returns false (default)
         let result = offchain::advance_lifecycle(1);
-        assert_eq!(result, false);
+        assert!(!result);
     }
 
     #[test]
@@ -373,7 +374,7 @@ mod tests {
         // Test with different IDs
         let result1 = offchain::advance_lifecycle(1);
         let result2 = offchain::advance_lifecycle(999);
-        assert_eq!(result1, false);
-        assert_eq!(result2, false);
+        assert!(!result1);
+        assert!(!result2);
     }
 }

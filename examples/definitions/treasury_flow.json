@@ -1,0 +1,13 @@
+{
+  "states": ["Proposed", "Approved", "Disbursed", "Archived"],
+  "transitions": [
+    {"from": "Proposed", "to": "Approved", "action": "approve"},
+    {"from": "Approved", "to": "Disbursed", "action": "disburse"},
+    {"from": "Disbursed", "to": "Archived", "action": "archive"}
+  ],
+  "defaults": {"initialState": "Proposed"},
+  "invariants": [
+    {"kind": "terminal_states", "states": ["Archived"]},
+    {"kind": "required_transitions", "transitions": [{"from": "Proposed", "to": "Approved"}]}
+  ]
+}

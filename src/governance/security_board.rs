@@ -25,7 +25,9 @@ pub enum SecurityBoardDecisionStatus {
     /// Decision pending
     Pending,
     /// Decision approved
+    Approved,
     /// Decision rejected
+    Rejected,
     /// Decision deferred
     Deferred,
 }
@@ -82,7 +84,7 @@ pub mod onchain {
         role: SecurityBoardMemberRole,
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(member_id > 0) {
+        if member_id == 0 {
             return Err(FsmError::InvalidInput);
         }
 
@@ -104,7 +106,7 @@ pub mod onchain {
         decision_data_hash: [u8; 32],
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(decision_id > 0) {
+        if decision_id == 0 {
             return Err(FsmError::InvalidInput);
         }
 
@@ -143,6 +145,7 @@ pub mod offchain {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::useless_vec)]
     use super::*;
     use crate::error::FsmError;
     use std::marker::PhantomData;
@@ -287,7 +290,7 @@ mod tests {
 
     #[test]
     fn test_initialize_decision() {
-        let mut decision = SecurityBoardDecisionMetadata {
+        let mut decision = SecurityBoardDecisionMetadata::<u8> {
             decision_id: 0,
             proposal_id: None,
             status: SecurityBoardDecisionStatus::Pending,
@@ -456,7 +459,7 @@ mod tests {
     #[test]
     fn test_initialize_decision_all_statuses_initialization() {
         // Initialize should always set status to Pending
-        let mut decision = SecurityBoardDecisionMetadata {
+        let mut decision = SecurityBoardDecisionMetadata::<u8> {
             decision_id: 0,
             proposal_id: None,
             status: SecurityBoardDecisionStatus::Approved, // Will be reset
@@ -562,7 +565,7 @@ mod tests {
 
     #[test]
     fn test_security_board_decision_metadata_all_fields() {
-        let decision = SecurityBoardDecisionMetadata {
+        let decision = SecurityBoardDecisionMetadata::<u8> {
             decision_id: 888,
             proposal_id: Some(777),
             status: SecurityBoardDecisionStatus::Approved,

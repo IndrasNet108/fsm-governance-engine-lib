@@ -36,10 +36,10 @@ pub mod onchain {
         score_data_hash: [u8; 32],
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(score_id > 0) {
+        if score_id == 0 {
             return Err(FsmError::InvalidInput);
         }
-        if !(overall_score <= 100) {
+        if overall_score > 100 {
             return Err(FsmError::InvalidInput);
         }
 

@@ -32,45 +32,66 @@ pub struct TreasuryOperationData<P> {
     pub capability_type: Option<String>, // For grant capability
     pub expires_at: Option<i64>,         // For grant capability
     pub description: String,             // Operation description
-    _phantom: PhantomData<P>,
+    pub(crate) _phantom: PhantomData<P>,
 }
 
 impl<P> TreasuryOperationData<P> {
+    pub fn new(
+        operation_type: TreasuryProposalType,
+        amount: Option<u64>,
+        target_treasury: Option<P>,
+        capability_grantee: Option<P>,
+        capability_type: Option<String>,
+        expires_at: Option<i64>,
+        description: String,
+    ) -> Self {
+        Self {
+            operation_type,
+            amount,
+            target_treasury,
+            capability_grantee,
+            capability_type,
+            expires_at,
+            description,
+            _phantom: PhantomData,
+        }
+    }
+
     pub fn validate(&self, current_time: i64) -> Result<(), FsmError> {
         match self.operation_type {
             TreasuryProposalType::Withdrawal
             | TreasuryProposalType::Deposit
             | TreasuryProposalType::Transfer => {
-                if !(self.amount.is_some()) {
+                if self.amount.is_none() {
                     return Err(FsmError::InvalidInput);
                 }
-                if !(self.amount.unwrap() > 0) {
+                if self.amount.unwrap() == 0 {
                     return Err(FsmError::InvalidInput);
                 }
-                if self.operation_type == TreasuryProposalType::Transfer {
-                    if !(self.target_treasury.is_some()) {
-                        return Err(FsmError::InvalidInput);
-                    }
+                if self.operation_type == TreasuryProposalType::Transfer
+                    && self.target_treasury.is_none()
+                {
+                    return Err(FsmError::InvalidInput);
                 }
             }
             TreasuryProposalType::GrantCapability => {
-                if !(self.capability_grantee.is_some()) {
+                if self.capability_grantee.is_none() {
                     return Err(FsmError::InvalidInput);
                 }
-                if !(self.capability_type.is_some()) {
+                if self.capability_type.is_none() {
                     return Err(FsmError::InvalidInput);
                 }
-                if !(self.expires_at.is_some()) {
+                if self.expires_at.is_none() {
                     return Err(FsmError::InvalidInput);
                 }
-                if let Some(exp) = self.expires_at {
-                    if !(exp > current_time) {
-                        return Err(FsmError::InvalidInput);
-                    }
+                if let Some(exp) = self.expires_at
+                    && exp <= current_time
+                {
+                    return Err(FsmError::InvalidInput);
                 }
             }
             TreasuryProposalType::RevokeCapability => {
-                if !(self.capability_grantee.is_some()) {
+                if self.capability_grantee.is_none() {
                     return Err(FsmError::InvalidInput);
                 }
             }
@@ -78,10 +99,10 @@ impl<P> TreasuryOperationData<P> {
                 // No specific requirements for config updates
             }
         }
-        if !(!self.description.is_empty()) {
+        if self.description.is_empty() {
             return Err(FsmError::InvalidInput);
         }
-        if !(self.description.len() <= 200) {
+        if self.description.len() > 200 {
             return Err(FsmError::InvalidInput);
         }
         Ok(())

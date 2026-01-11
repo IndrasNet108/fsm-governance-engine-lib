@@ -49,13 +49,13 @@ pub mod onchain {
         policy_data_hash: [u8; 32],
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(policy_id > 0) {
+        if policy_id == 0 {
             return Err(FsmError::InvalidInput);
         }
-        if !(!name.is_empty()) {
+        if name.is_empty() {
             return Err(FsmError::InvalidInput);
         }
-        if !(name.len() <= 100) {
+        if name.len() > 100 {
             return Err(FsmError::InvalidInput);
         }
 
@@ -81,6 +81,7 @@ pub mod offchain {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::useless_vec)]
     use super::*;
     use crate::error::FsmError;
 
@@ -413,7 +414,7 @@ mod tests {
     fn test_offchain_enforce_policy() {
         // Test that offchain function exists and returns false (default)
         let result = offchain::enforce_policy(1);
-        assert_eq!(result, false);
+        assert!(!result);
     }
 
     #[test]
@@ -421,7 +422,7 @@ mod tests {
         // Test with different IDs
         let result1 = offchain::enforce_policy(1);
         let result2 = offchain::enforce_policy(999);
-        assert_eq!(result1, false);
-        assert_eq!(result2, false);
+        assert!(!result1);
+        assert!(!result2);
     }
 }

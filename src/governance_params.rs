@@ -32,14 +32,14 @@ impl GovernanceParams {
         current_time: i64,
     ) -> Result<Self, FsmError> {
         // Validate parameters
-        if !(quorum_percentage > 0 && quorum_percentage <= 100) {
+        if quorum_percentage == 0 || quorum_percentage > 100 {
             return Err(FsmError::InvalidInput);
         }
-        if !((24..=720).contains(&vote_duration_hours)) {
+        if !(24..=720).contains(&vote_duration_hours) {
             // 24 hours - 30 days
             return Err(FsmError::InvalidInput);
         }
-        if !(delegate_weight_percentage <= 100) {
+        if delegate_weight_percentage > 100 {
             return Err(FsmError::InvalidInput);
         }
 
@@ -67,26 +67,26 @@ impl GovernanceParams {
     ) -> Result<(), FsmError> {
         // Update parameters with validation
         if let Some(quorum) = quorum_percentage {
-            if !(quorum > 0 && quorum <= 100) {
+            if quorum == 0 || quorum > 100 {
                 return Err(FsmError::InvalidInput);
             }
             // Constraint: maximum change ±10%
             let diff = quorum.abs_diff(self.quorum_percentage);
-            if !(diff <= 10) {
+            if diff > 10 {
                 return Err(FsmError::InvalidInput);
             }
             self.quorum_percentage = quorum;
         }
 
         if let Some(duration) = vote_duration_hours {
-            if !((24..=720).contains(&duration)) {
+            if !(24..=720).contains(&duration) {
                 return Err(FsmError::InvalidInput);
             }
             self.vote_duration_hours = duration;
         }
 
         if let Some(weight) = delegate_weight_percentage {
-            if !(weight <= 100) {
+            if weight > 100 {
                 return Err(FsmError::InvalidInput);
             }
             self.delegate_weight_percentage = weight;
@@ -121,7 +121,7 @@ mod tests {
         assert_eq!(params.quorum_percentage, 50);
         assert_eq!(params.vote_duration_hours, 168);
         assert_eq!(params.delegate_weight_percentage, 30);
-        assert_eq!(params.early_quorum_enabled, true);
+        assert!(params.early_quorum_enabled);
         assert_eq!(params.update_timestamp, 1000);
     }
 
@@ -177,7 +177,7 @@ mod tests {
 
         // Update early_quorum_enabled
         assert!(params.update(None, None, None, Some(false), 5000).is_ok());
-        assert_eq!(params.early_quorum_enabled, false);
+        assert!(!params.early_quorum_enabled);
     }
 
     #[test]
@@ -277,7 +277,7 @@ mod tests {
         assert_eq!(params.quorum_percentage, 55);
         assert_eq!(params.vote_duration_hours, 240);
         assert_eq!(params.delegate_weight_percentage, 35);
-        assert_eq!(params.early_quorum_enabled, false);
+        assert!(!params.early_quorum_enabled);
         assert_eq!(params.update_timestamp, 2000);
     }
 
@@ -339,7 +339,7 @@ mod tests {
         assert_eq!(params.quorum_percentage, 75);
         assert_eq!(params.vote_duration_hours, 336);
         assert_eq!(params.delegate_weight_percentage, 50);
-        assert_eq!(params.early_quorum_enabled, false);
+        assert!(!params.early_quorum_enabled);
         assert_eq!(params.update_timestamp, 5000);
     }
 
@@ -364,7 +364,7 @@ mod tests {
         assert_eq!(params.quorum_percentage, 75);
         assert_eq!(params.vote_duration_hours, 336);
         assert_eq!(params.delegate_weight_percentage, 50);
-        assert_eq!(params.early_quorum_enabled, false);
+        assert!(!params.early_quorum_enabled);
         assert_eq!(params.update_timestamp, 5000);
     }
 
@@ -378,7 +378,7 @@ mod tests {
         assert_eq!(params.quorum_percentage, 55);
         assert_eq!(params.vote_duration_hours, 168); // Unchanged
         assert_eq!(params.delegate_weight_percentage, 30); // Unchanged
-        assert_eq!(params.early_quorum_enabled, true); // Unchanged
+        assert!(params.early_quorum_enabled); // Unchanged
         assert_eq!(params.update_timestamp, 2000);
     }
 

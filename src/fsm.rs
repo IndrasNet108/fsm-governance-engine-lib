@@ -4,8 +4,8 @@
 //! Each state defines which states it can transition to, ensuring valid state changes.
 
 use crate::enums::IdeaStatus;
-use crate::grant::types::GrantStatus;
 use crate::error::FsmError;
+use crate::grant::types::GrantStatus;
 
 /// FSM implementation for IdeaStatus
 impl IdeaStatus {

@@ -55,7 +55,7 @@ pub mod onchain {
         analytics_config_hash: [u8; 32],
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(analytics_id > 0) {
+        if analytics_id == 0 {
             return Err(FsmError::InvalidInput);
         }
         analytics.analytics_id = analytics_id;
@@ -75,6 +75,7 @@ pub mod offchain {
 }
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::useless_vec)]
     use super::*;
     use crate::error::FsmError;
     #[test]
@@ -98,11 +99,11 @@ mod tests {
         );
 
         assert!(result.is_ok());
-        assert_eq!(analytics.analytics_id);
-        assert_eq!(analytics.proposal_id);
+        assert_eq!(analytics.analytics_id, 1);
+        assert_eq!(analytics.proposal_id, 10);
         assert_eq!(analytics.analytics_type, ProposalAnalyticsType::Engagement);
         assert_eq!(analytics.status, ProposalAnalyticsStatus::Active);
-        assert_eq!(analytics.created_at);
+        assert_eq!(analytics.created_at, 1000);
     }
     #[test]
     fn test_initialize_proposal_analytics_invalid_id() {
@@ -170,11 +171,11 @@ mod tests {
     #[test]
     fn test_proposal_analytics_metadata_structure() {
         let analytics = create_test_analytics();
-        assert_eq!(analytics.analytics_id);
-        assert_eq!(analytics.proposal_id);
+        assert_eq!(analytics.analytics_id, 1);
+        assert_eq!(analytics.proposal_id, 100);
         assert_eq!(analytics.analytics_type, ProposalAnalyticsType::Support);
         assert_eq!(analytics.status, ProposalAnalyticsStatus::Active);
-        assert_eq!(analytics.created_at);
+        assert_eq!(analytics.created_at, 1000);
     }
     #[test]
     fn test_initialize_proposal_analytics_all_types() {
@@ -248,7 +249,7 @@ mod tests {
             1000,
         );
         assert!(result.is_ok());
-        assert_eq!(analytics.proposal_id);
+        assert_eq!(analytics.proposal_id, 99999);
     }
     #[test]
     fn test_initialize_proposal_analytics_timestamp() {
@@ -262,7 +263,7 @@ mod tests {
             33445,
         );
         assert!(result.is_ok());
-        assert_eq!(analytics.created_at);
+        assert_eq!(analytics.created_at, 33445);
     }
     #[test]
     fn test_proposal_analytics_enum_equality() {
@@ -381,11 +382,11 @@ mod tests {
 
         assert!(result.is_ok());
         // All fields should be updated
-        assert_eq!(analytics.analytics_id);
-        assert_eq!(analytics.proposal_id);
+        assert_eq!(analytics.analytics_id, 1);
+        assert_eq!(analytics.proposal_id, 2);
         assert_eq!(analytics.analytics_type, ProposalAnalyticsType::Opposition);
         assert_eq!(analytics.status, ProposalAnalyticsStatus::Active); // Always set to Active
-        assert_eq!(analytics.created_at);
+        assert_eq!(analytics.created_at, 3000);
         assert_eq!(analytics.analytics_config_hash, new_hash);
     }
     #[test]
@@ -399,11 +400,11 @@ mod tests {
             analytics_config_hash: [42u8; 32],
         };
 
-        assert_eq!(analytics.analytics_id);
-        assert_eq!(analytics.proposal_id);
+        assert_eq!(analytics.analytics_id, 123);
+        assert_eq!(analytics.proposal_id, 456);
         assert_eq!(analytics.analytics_type, ProposalAnalyticsType::Opposition);
         assert_eq!(analytics.status, ProposalAnalyticsStatus::Paused);
-        assert_eq!(analytics.created_at);
+        assert_eq!(analytics.created_at, 5000);
         assert_eq!(analytics.analytics_config_hash, [42u8; 32]);
     }
 }

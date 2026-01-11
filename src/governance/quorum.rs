@@ -54,10 +54,10 @@ pub mod onchain {
         calculation_method: QuorumCalculationMethod,
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(quorum_id > 0) {
+        if quorum_id == 0 {
             return Err(FsmError::InvalidInput);
         }
-        if !(required_percentage <= 100) {
+        if required_percentage > 100 {
             return Err(FsmError::InvalidInput);
         }
 
@@ -79,7 +79,7 @@ pub mod onchain {
         new_percentage: u8,
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(new_percentage <= 100) {
+        if new_percentage > 100 {
             return Err(FsmError::InvalidInput);
         }
 
@@ -115,6 +115,7 @@ pub mod offchain {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::useless_vec)]
     use super::*;
     use crate::error::FsmError;
 
@@ -158,7 +159,7 @@ mod tests {
             QuorumCalculationMethod::FixedPercentage
         );
         assert_eq!(quorum.current_percentage, 0);
-        assert_eq!(quorum.quorum_reached, false);
+        assert!(!quorum.quorum_reached);
         assert_eq!(quorum.created_at, 1000);
         assert_eq!(quorum.updated_at, 1000);
     }
@@ -191,7 +192,7 @@ mod tests {
         assert_eq!(quorum.required_percentage, 75);
         assert_eq!(quorum.calculation_method, QuorumCalculationMethod::Dynamic);
         assert_eq!(quorum.current_percentage, 0);
-        assert_eq!(quorum.quorum_reached, false);
+        assert!(!quorum.quorum_reached);
         assert_eq!(quorum.created_at, 7000);
         assert_eq!(quorum.updated_at, 7000);
     }
@@ -254,7 +255,7 @@ mod tests {
 
         assert!(result.is_ok());
         assert_eq!(quorum.current_percentage, 60);
-        assert_eq!(quorum.quorum_reached, true); // 60 >= 50
+        assert!(quorum.quorum_reached); // 60 >= 50
         assert_eq!(quorum.updated_at, 8000);
     }
 
@@ -267,7 +268,7 @@ mod tests {
 
         assert!(result.is_ok());
         assert_eq!(quorum.current_percentage, 30);
-        assert_eq!(quorum.quorum_reached, false); // 30 < 50
+        assert!(!quorum.quorum_reached); // 30 < 50
         assert_eq!(quorum.updated_at, 9000);
     }
 
@@ -280,7 +281,7 @@ mod tests {
 
         assert!(result.is_ok());
         assert_eq!(quorum.current_percentage, 50);
-        assert_eq!(quorum.quorum_reached, true); // 50 >= 50
+        assert!(quorum.quorum_reached); // 50 >= 50
     }
 
     #[test]
@@ -322,12 +323,12 @@ mod tests {
         // Test 0%
         assert!(onchain::update_quorum_percentage(&mut quorum, 0, 1000).is_ok());
         assert_eq!(quorum.current_percentage, 0);
-        assert_eq!(quorum.quorum_reached, false);
+        assert!(!quorum.quorum_reached);
 
         // Test 100%
         assert!(onchain::update_quorum_percentage(&mut quorum, 100, 2000).is_ok());
         assert_eq!(quorum.current_percentage, 100);
-        assert_eq!(quorum.quorum_reached, true);
+        assert!(quorum.quorum_reached);
     }
 
     #[test]
@@ -433,7 +434,7 @@ mod tests {
         assert_eq!(quorum.created_at, 5000);
         // Updated fields
         assert_eq!(quorum.current_percentage, 70);
-        assert_eq!(quorum.quorum_reached, true);
+        assert!(quorum.quorum_reached);
         assert_eq!(quorum.updated_at, 6000);
     }
 
@@ -444,11 +445,11 @@ mod tests {
 
         // Start below threshold
         onchain::update_quorum_percentage(&mut quorum, 30, 1000).unwrap();
-        assert_eq!(quorum.quorum_reached, false);
+        assert!(!quorum.quorum_reached);
 
         // Update to above threshold
         onchain::update_quorum_percentage(&mut quorum, 60, 2000).unwrap();
-        assert_eq!(quorum.quorum_reached, true);
+        assert!(quorum.quorum_reached);
     }
 
     #[test]
@@ -458,11 +459,11 @@ mod tests {
 
         // Start above threshold
         onchain::update_quorum_percentage(&mut quorum, 60, 1000).unwrap();
-        assert_eq!(quorum.quorum_reached, true);
+        assert!(quorum.quorum_reached);
 
         // Update to below threshold (shouldn't happen in practice, but test logic)
         onchain::update_quorum_percentage(&mut quorum, 30, 2000).unwrap();
-        assert_eq!(quorum.quorum_reached, false);
+        assert!(!quorum.quorum_reached);
     }
 
     #[test]
@@ -483,7 +484,7 @@ mod tests {
         assert_eq!(quorum.required_percentage, 75);
         assert_eq!(quorum.calculation_method, QuorumCalculationMethod::Weighted);
         assert_eq!(quorum.current_percentage, 80);
-        assert_eq!(quorum.quorum_reached, true);
+        assert!(quorum.quorum_reached);
         assert_eq!(quorum.created_at, 1000);
         assert_eq!(quorum.updated_at, 2000);
     }
@@ -512,7 +513,7 @@ mod tests {
 
         assert!(result.is_ok());
         assert_eq!(quorum.current_percentage, 0);
-        assert_eq!(quorum.quorum_reached, false);
+        assert!(!quorum.quorum_reached);
     }
 
     #[test]
@@ -565,7 +566,7 @@ mod tests {
         // 49% - should not reach quorum
         assert!(onchain::update_quorum_percentage(&mut quorum, 49, 2000).is_ok());
         assert_eq!(quorum.current_percentage, 49);
-        assert_eq!(quorum.quorum_reached, false);
+        assert!(!quorum.quorum_reached);
     }
 
     #[test]

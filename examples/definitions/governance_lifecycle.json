@@ -1,0 +1,12 @@
+{
+  "states": ["Draft", "Active", "Passed", "Executed"],
+  "transitions": [
+    {"from": "Draft", "to": "Active", "action": "activate"},
+    {"from": "Active", "to": "Passed", "action": "pass"},
+    {"from": "Passed", "to": "Executed", "action": "execute"}
+  ],
+  "defaults": {"initialState": "Draft"},
+  "invariants": [
+    {"kind": "terminal_states", "states": ["Executed"]}
+  ]
+}

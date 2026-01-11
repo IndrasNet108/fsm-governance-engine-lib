@@ -4,7 +4,9 @@ use crate::grant::voting_types::VoteType;
 use borsh::{BorshDeserialize, BorshSerialize};
 use serde::{Deserialize, Serialize};
 
-#[derive(BorshSerialize, BorshDeserialize, Serialize, Deserialize, Copy, Clone, PartialEq, Eq, Debug)]
+#[derive(
+    BorshSerialize, BorshDeserialize, Serialize, Deserialize, Copy, Clone, PartialEq, Eq, Debug,
+)]
 pub enum VoterType {
     MeshGroupMember,
     DaoMember,

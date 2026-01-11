@@ -1,0 +1,10 @@
+{
+  "states": ["Pending", "Approved"],
+  "transitions": [
+    {"from": "Pending", "to": "Approved", "action": "approve"}
+  ],
+  "defaults": {"initialState": "Pending"},
+  "invariants": [
+    {"kind": "terminal_states", "states": ["Approved"]}
+  ]
+}

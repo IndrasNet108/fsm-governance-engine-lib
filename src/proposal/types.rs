@@ -1,5 +1,4 @@
 //! Proposal account structures
-use crate::error::FsmError;
 use std::marker::PhantomData;
 /// Proposal status enum
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -46,12 +45,12 @@ pub struct Proposal<P> {
     /// Optional: Treasury operation data for Treasury proposals
     /// None means this is not a Treasury proposal
     pub treasury_operation: Option<crate::proposal::treasury::TreasuryOperationData<P>>,
-    _phantom: PhantomData<P>,
+    pub(crate) _phantom: PhantomData<P>,
 }
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::useless_vec)]
     use super::*;
-    use crate::error::FsmError;
     use std::marker::PhantomData;
     fn create_test_pubkey(seed: u8) -> u8 {
         seed
@@ -106,7 +105,7 @@ mod tests {
     #[test]
     fn test_proposal_structure() {
         let proposal = create_test_proposal();
-        assert_eq!(proposal.id);
+        assert_eq!(proposal.id, 1);
         assert_eq!(proposal.title, "Test Proposal");
         assert_eq!(proposal.description, "Test Description");
         assert_eq!(proposal.proposal_type, "governance");
@@ -139,9 +138,9 @@ mod tests {
         proposal.no_votes = 50;
         proposal.total_votes = 150;
 
-        assert_eq!(proposal.yes_votes);
-        assert_eq!(proposal.no_votes);
-        assert_eq!(proposal.total_votes);
+        assert_eq!(proposal.yes_votes, 100);
+        assert_eq!(proposal.no_votes, 50);
+        assert_eq!(proposal.total_votes, 150);
     }
     #[test]
     fn test_proposal_timestamps() {
@@ -154,7 +153,7 @@ mod tests {
         proposal.archived_at = Some(5000);
         proposal.last_tallied_at = Some(6000);
 
-        assert_eq!(proposal.created_at);
+        assert_eq!(proposal.created_at, 1000);
         assert_eq!(proposal.updated_at, Some(2000));
         assert_eq!(proposal.submitted_at, Some(3000));
         assert_eq!(proposal.executed_at, Some(4000));
@@ -209,10 +208,10 @@ mod tests {
         let mut proposal = create_test_proposal();
 
         proposal.voting_duration = 24; // 1 day
-        assert_eq!(proposal.voting_duration);
+        assert_eq!(proposal.voting_duration, 24);
 
         proposal.voting_duration = 720; // 30 days
-        assert_eq!(proposal.voting_duration);
+        assert_eq!(proposal.voting_duration, 720);
     }
     #[test]
     fn test_proposal_id_boundary() {
@@ -222,7 +221,7 @@ mod tests {
         assert_eq!(proposal.id, u64::MAX);
 
         proposal.id = 1;
-        assert_eq!(proposal.id);
+        assert_eq!(proposal.id, 1);
     }
     #[test]
     fn test_proposal_status_equality() {
@@ -294,22 +293,22 @@ mod tests {
             _phantom: PhantomData,
         };
 
-        assert_eq!(proposal.id);
+        assert_eq!(proposal.id, 123);
         assert_eq!(proposal.title, "Title");
         assert_eq!(proposal.description, "Description");
         assert_eq!(proposal.proposal_type, "type");
         assert_eq!(proposal.author, create_test_pubkey(5));
-        assert_eq!(proposal.created_at);
+        assert_eq!(proposal.created_at, 1000);
         assert_eq!(proposal.updated_at, Some(2000));
         assert_eq!(proposal.submitted_at, Some(3000));
         assert_eq!(proposal.cancelled_at, Some(4000));
         assert_eq!(proposal.executed_at, Some(5000));
         assert_eq!(proposal.archived_at, Some(6000));
-        assert_eq!(proposal.voting_duration);
+        assert_eq!(proposal.voting_duration, 168);
         assert_eq!(proposal.status, ProposalStatus::Active);
-        assert_eq!(proposal.yes_votes);
-        assert_eq!(proposal.no_votes);
-        assert_eq!(proposal.total_votes);
+        assert_eq!(proposal.yes_votes, 100);
+        assert_eq!(proposal.no_votes, 50);
+        assert_eq!(proposal.total_votes, 150);
         assert_eq!(proposal.last_tallied_at, Some(7000));
         assert_eq!(proposal.cancellation_reason, Some("Reason".to_string()));
         assert_eq!(proposal.execution_data, Some("Data".to_string()));
@@ -371,9 +370,9 @@ mod tests {
     #[test]
     fn test_proposal_zero_votes() {
         let proposal = create_test_proposal();
-        assert_eq!(proposal.yes_votes);
-        assert_eq!(proposal.no_votes);
-        assert_eq!(proposal.total_votes);
+        assert_eq!(proposal.yes_votes, 0);
+        assert_eq!(proposal.no_votes, 0);
+        assert_eq!(proposal.total_votes, 0);
     }
     #[test]
     fn test_proposal_status_all_variants_unique() {
@@ -423,21 +422,21 @@ mod tests {
             _phantom: PhantomData,
         };
 
-        assert_eq!(proposal.id);
+        assert_eq!(proposal.id, 999);
         assert_eq!(proposal.title, "Advanced Proposal");
         assert_eq!(proposal.description, "Advanced Description");
         assert_eq!(proposal.proposal_type, "advanced");
         assert_eq!(proposal.author, author);
-        assert_eq!(proposal.created_at);
+        assert_eq!(proposal.created_at, 5000);
         assert_eq!(proposal.updated_at, Some(6000));
         assert_eq!(proposal.submitted_at, Some(7000));
         assert_eq!(proposal.executed_at, Some(8000));
         assert_eq!(proposal.archived_at, Some(9000));
-        assert_eq!(proposal.voting_duration);
+        assert_eq!(proposal.voting_duration, 720);
         assert_eq!(proposal.status, ProposalStatus::Executed);
-        assert_eq!(proposal.yes_votes);
-        assert_eq!(proposal.no_votes);
-        assert_eq!(proposal.total_votes);
+        assert_eq!(proposal.yes_votes, 200);
+        assert_eq!(proposal.no_votes, 100);
+        assert_eq!(proposal.total_votes, 300);
         assert_eq!(proposal.last_tallied_at, Some(8500));
         assert_eq!(
             proposal.execution_data,

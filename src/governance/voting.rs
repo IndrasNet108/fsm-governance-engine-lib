@@ -60,7 +60,7 @@ pub mod onchain {
         voting_data_hash: [u8; 32],
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(voting_id > 0) {
+        if voting_id == 0 {
             return Err(FsmError::InvalidInput);
         }
         voting.voting_id = voting_id;
@@ -82,6 +82,7 @@ pub mod offchain {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::useless_vec)]
     use super::*;
     use crate::error::FsmError;
 

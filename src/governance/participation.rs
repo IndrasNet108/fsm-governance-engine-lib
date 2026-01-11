@@ -60,7 +60,7 @@ pub mod onchain {
         participation_config_hash: [u8; 32],
         current_time: i64,
     ) -> Result<(), FsmError> {
-        if !(participation_id > 0) {
+        if participation_id == 0 {
             return Err(FsmError::InvalidInput);
         }
         participation.participation_id = participation_id;
@@ -82,6 +82,7 @@ pub mod offchain {
 
 #[cfg(test)]
 mod tests {
+    #![allow(clippy::useless_vec)]
     use super::*;
     use crate::error::FsmError;
 
