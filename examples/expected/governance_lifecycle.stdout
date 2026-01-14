@@ -1,0 +1,5 @@
+Audit JSONL:
+{"proposal_id":1,"from_state":"Draft","to_state":"Active","action":"activate","timestamp":1}
+{"proposal_id":1,"from_state":"Active","to_state":"Passed","action":"pass","timestamp":11}
+{"proposal_id":1,"from_state":"Passed","to_state":"Executed","action":"execute","timestamp":12}
+Proposal lifecycle complete: Executed

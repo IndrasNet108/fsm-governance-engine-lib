@@ -1,0 +1,25 @@
+name: validate-fsm
+
+on:
+  pull_request:
+  push:
+    branches: ["master"]
+
+jobs:
+  validate-fsm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: build validator
+        run: cargo build --bin fsm_validate
+      - name: validate example definition
+        run: cargo run --bin fsm_validate -- docs/example_fsm_definition.json --schema docs/FSM_schema.json --strict
+      - name: validate governance example
+        run: cargo run --bin fsm_validate -- examples/definitions/governance_lifecycle.json --schema docs/FSM_schema.json --strict
+      - name: governance example output
+        run: cargo run --example governance_lifecycle > /tmp/governance_lifecycle.out
+      - name: compare governance output
+        run: diff -u examples/expected/governance_lifecycle.stdout /tmp/governance_lifecycle.out
