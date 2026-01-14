@@ -1,0 +1,25 @@
+[package]
+name = "fsm_governance_engine_lib-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+
+[dependencies.fsm_governance_engine_lib]
+path = ".."
+
+[dependencies.serde_json]
+version = "1.0"
+
+[[bin]]
+name = "definition_parser"
+path = "fuzz_targets/definition_parser.rs"
+
+[[bin]]
+name = "definition_validate"
+path = "fuzz_targets/definition_validate.rs"

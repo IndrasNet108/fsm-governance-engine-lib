@@ -1,0 +1,21 @@
+name: fuzz
+
+on:
+  schedule:
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: nightly
+      - name: install cargo-fuzz
+        run: cargo install cargo-fuzz
+      - name: fuzz definition parser
+        run: cargo fuzz run definition_parser -- -max_total_time=600
+      - name: fuzz definition validate
+        run: cargo fuzz run definition_validate -- -max_total_time=600
