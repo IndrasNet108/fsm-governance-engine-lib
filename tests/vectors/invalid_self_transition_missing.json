@@ -1,0 +1,9 @@
+{
+  "states": ["A"],
+  "transitions": [
+    {"from": "A", "to": "A", "action": "stay"}
+  ],
+  "invariants": [
+    {"kind": "self_transitions_required", "states": ["B"]}
+  ]
+}

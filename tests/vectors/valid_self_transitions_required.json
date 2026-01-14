@@ -1,0 +1,9 @@
+{
+  "states": ["Idle"],
+  "transitions": [
+    {"from": "Idle", "to": "Idle", "action": "noop"}
+  ],
+  "invariants": [
+    {"kind": "self_transitions_required"}
+  ]
+}

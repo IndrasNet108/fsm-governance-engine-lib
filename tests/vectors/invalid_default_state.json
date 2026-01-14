@@ -1,0 +1,7 @@
+{
+  "states": ["A", "B"],
+  "transitions": [
+    {"from": "A", "to": "B", "action": "go"}
+  ],
+  "defaults": {"initialState": "C"}
+}

@@ -1,0 +1,7 @@
+{
+  "states": ["A", "B", "C"],
+  "transitions": [
+    {"from": "A", "to": "B", "action": "step1"},
+    {"from": "B", "to": "C", "action": "step2"}
+  ]
+}

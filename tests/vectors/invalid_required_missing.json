@@ -1,0 +1,9 @@
+{
+  "states": ["A", "B"],
+  "transitions": [
+    {"from": "A", "to": "B", "action": "go"}
+  ],
+  "invariants": [
+    {"kind": "required_transitions", "transitions": [{"from": "B", "to": "A"}]}
+  ]
+}

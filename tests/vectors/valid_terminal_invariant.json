@@ -1,0 +1,9 @@
+{
+  "states": ["Open", "Closed"],
+  "transitions": [
+    {"from": "Open", "to": "Closed", "action": "close"}
+  ],
+  "invariants": [
+    {"kind": "terminal_states", "states": ["Closed"]}
+  ]
+}
