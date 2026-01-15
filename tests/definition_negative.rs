@@ -1,5 +1,5 @@
 use fsm_governance_engine_lib::{
-    FsmDefinition, FsmDefaults, FsmError, FsmInvariant, FsmTransition, FsmTransitionRef,
+    FsmDefaults, FsmDefinition, FsmError, FsmInvariant, FsmTransition, FsmTransitionRef,
 };
 
 fn base_definition() -> FsmDefinition {
@@ -315,23 +315,26 @@ invalid_test!(invalid_self_transition_required_missing_all, || {
     definition
 });
 
-invalid_test!(invalid_self_transition_required_missing_second_state, || {
-    let mut definition = base_definition();
-    definition.transitions.push(FsmTransition {
-        from: "A".into(),
-        to: "A".into(),
-        action: "stay".into(),
-        guard: None,
-        metadata: None,
-    });
-    definition.invariants = vec![FsmInvariant {
-        kind: "self_transitions_required".into(),
-        states: vec!["A".into(), "B".into()],
-        transitions: vec![],
-        description: None,
-    }];
-    definition
-});
+invalid_test!(
+    invalid_self_transition_required_missing_second_state,
+    || {
+        let mut definition = base_definition();
+        definition.transitions.push(FsmTransition {
+            from: "A".into(),
+            to: "A".into(),
+            action: "stay".into(),
+            guard: None,
+            metadata: None,
+        });
+        definition.invariants = vec![FsmInvariant {
+            kind: "self_transitions_required".into(),
+            states: vec!["A".into(), "B".into()],
+            transitions: vec![],
+            description: None,
+        }];
+        definition
+    }
+);
 
 invalid_test!(invalid_forbidden_cycle_self_transition, || {
     let mut definition = base_definition();
