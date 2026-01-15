@@ -1,0 +1,14 @@
+name: codex-guard
+
+on:
+  pull_request:
+  push:
+    branches: ["master"]
+
+jobs:
+  codex-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: codex guard
+        run: ./scripts/codex_guard.sh

@@ -1,5 +1,7 @@
 # FSM Governance Engine
 
+Before making any changes, read `CODEX_INSTRUCTIONS.md` and follow it strictly.
+
 Standalone Rust library for deterministic validation of integrity-critical, human-driven and system-driven processes.
 This project implements a validation-only FSM core. It does not execute actions, automate decisions, or enforce outcomes.
 

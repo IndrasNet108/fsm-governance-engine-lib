@@ -1,0 +1,11 @@
+{
+  "states": ["Start", "End"],
+  "transitions": [
+    {
+      "from": "Start",
+      "to": "End",
+      "action": "finish",
+      "metadata": {"roles": ["reviewer", "owner"]}
+    }
+  ]
+}

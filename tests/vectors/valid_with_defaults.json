@@ -1,0 +1,7 @@
+{
+  "states": ["Draft", "Approved"],
+  "transitions": [
+    {"from": "Draft", "to": "Approved", "action": "approve"}
+  ],
+  "defaults": {"initialState": "Draft"}
+}

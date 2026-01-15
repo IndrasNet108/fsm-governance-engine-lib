@@ -1,0 +1,10 @@
+{
+  "states": ["A", "B"],
+  "transitions": [
+    {"from": "A", "to": "B", "action": "go"},
+    {"from": "B", "to": "A", "action": "back"}
+  ],
+  "invariants": [
+    {"kind": "forbidden_cycles", "states": ["A"]}
+  ]
+}
