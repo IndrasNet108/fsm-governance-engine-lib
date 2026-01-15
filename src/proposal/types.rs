@@ -1,7 +1,9 @@
 //! Proposal account structures
 use std::marker::PhantomData;
+
+use serde::{Deserialize, Serialize};
 /// Proposal status enum
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ProposalStatus {
     Draft,
     Active,
