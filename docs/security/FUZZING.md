@@ -15,6 +15,9 @@ This project uses cargo fuzz with libFuzzer.
 - definition_validate
   - Parses definition JSON and runs validate.
 
+## Workspace
+The fuzz crate is included in workspace members to keep CI stable.
+
 ## Budget
 Nightly budget: ten minutes per target.
 
