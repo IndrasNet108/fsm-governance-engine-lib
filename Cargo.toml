@@ -5,7 +5,7 @@ edition = "2024"
 description = "Declarative, validation-only FSM library with invariants and deterministic auditability"
 keywords = ["fsm","governance","audit","compliance"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/IndrasNet108/fsm_governance_engine_lib"
+repository = "https://github.com/IndrasNet108/fsm-governance-engine-lib"
 
 [dependencies]
 borsh = { version = "1.6", features = ["derive"] }
