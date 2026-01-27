@@ -1,5 +1,7 @@
 # FSM Governance Engine
 
+[![DOI](https://zenodo.org/badge/1120650150.svg)](https://doi.org/10.5281/zenodo.18394740)
+
 Before making any changes, read `CODEX_INSTRUCTIONS.md` and follow it strictly.
 
 Standalone Rust library for deterministic validation of integrity-critical, human-driven and system-driven processes.
