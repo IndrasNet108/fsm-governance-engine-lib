@@ -1,12 +1,11 @@
 # Invariants
 
-Invariants are declarative guarantees about process correctness that sit on top of state
-transitions. They are intended to be machine-verifiable and auditor-friendly, without
-introducing execution logic.
+Invariants define checkable constraints over declared states and transitions. They are
+intended to be machine-verifiable and auditor-friendly, without introducing execution logic.
 
 ## Why invariants
 
-- Provide deterministic guarantees about allowed process behavior.
+- Provide deterministic validation outcomes about allowed process behavior.
 - Make governance workflows auditable as a set of rules, not just code paths.
 - Allow multiple implementations to validate the same process definition.
 
