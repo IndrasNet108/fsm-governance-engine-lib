@@ -131,7 +131,7 @@ The following document provides broader conceptual background and is not require
 
 The civilization model that guides IndrasNet—its MVP → Audit → Post-grant evolution, the deprecated PDA memory layer, and the cryptographic constitution—is laid out in `INDRASNET_CIVILIZATION_FOUNDATION.md`. That document makes explicit how an ontology-driven constitution, AI jurisdiction, PDA reality, and CI-based constitutional control form a single self-correcting civilization.
 
-Security note: This library validates process correctness but does not execute actions, manage assets, or replace human decision-making.
+Security note: This library validates declared process constraints and transition rules without asserting process correctness, and does not execute actions, manage assets, or replace human decision-making.
 
 IndrasNet® is a registered trademark of IndrasNet OÜ.
 This project is not affiliated with or endorsed by IndrasNet OÜ unless explicitly stated.

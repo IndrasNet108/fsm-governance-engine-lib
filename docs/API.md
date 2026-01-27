@@ -50,8 +50,8 @@ All domain structs derive both `BorshSerialize/BorshDeserialize` and `Serialize/
 
 ## Concrete use cases
 
-- **DAO grants**: Use `Grant` + `AuditTrail` to enforce `pending→approved→active` transitions, attach `GrantVote` results, and log disbursements (urgent/escrow).  
-- **Treasury workflow**: Treat `GrantStatus` as `TreasuryStatus` (`Proposed`, `Allocated`, `Settled`) and reuse `AuditTrail` entries for compliance proof.  
+- **DAO grants**: Use `Grant` + `AuditTrail` to validate transition attempts (`pending→approved→active`), attach `GrantVote` results, and log disbursements (urgent/escrow).  
+- **Treasury workflow**: Treat `GrantStatus` as `TreasuryStatus` (`Proposed`, `Allocated`, `Settled`) and reuse `AuditTrail` entries as compliance-relevant validation artifacts.  
 - **Compliance pipeline**: Replace `Grant` with a `Report` type; each transition logs reviewer, decision, and metadata for regulators.
 
 This makes the module reusable for treasury workflows, compliance pipelines, or regulator-managed processes.

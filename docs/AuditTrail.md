@@ -1,6 +1,6 @@
 # Audit trail specification
 
-Audit trail records every forced state transition performed by the FSM Governance Engine. Each entry is immutable and can be serialized both as binary (`borsh`) and JSON (`serde`) for downstream verification or export.
+Audit trail records validation outcomes for attempted state transitions. Each entry is immutable and can be serialized both as binary (`borsh`) and JSON (`serde`) for downstream verification or export.
 
 ## Entry format (`AuditEntry`)
 
