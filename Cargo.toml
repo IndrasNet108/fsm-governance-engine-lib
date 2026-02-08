@@ -17,4 +17,4 @@ jsonschema = "0.41"
 members = ["fuzz"]
 
 [dev-dependencies]
-proptest = "1.4"
+proptest = "1.10"
