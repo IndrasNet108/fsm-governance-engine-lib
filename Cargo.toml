@@ -11,7 +11,7 @@ repository = "https://github.com/IndrasNet108/fsm-governance-engine-lib"
 borsh = { version = "1.6", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-jsonschema = "0.41"
+jsonschema = "0.42"
 
 [workspace]
 members = ["fuzz"]
