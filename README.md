@@ -1,6 +1,10 @@
 # FSM Governance Engine
 
 [![DOI](https://zenodo.org/badge/1120650150.svg)](https://doi.org/10.5281/zenodo.18394740)
+  
+  DOI (engine v0.1.1): https://doi.org/10.5281/zenodo.18394741
+  DOI (DLX overview v1.0): https://doi.org/10.5281/zenodo.18862312
+  
 
 Before making any changes, read `CODEX_INSTRUCTIONS.md` and follow it strictly.
 
